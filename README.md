@@ -65,11 +65,6 @@ All tests passing with successful completion in 0.02s
   - CSRF protection
   - Secure cookie handling
 
-- TLS Hardening
-  - Modern cipher suites
-  - TLS 1.3 support
-  - OCSP stapling
-
 - Logging & Monitoring
   - Security event logging
   - Authentication attempt tracking
@@ -83,7 +78,9 @@ All tests passing with successful completion in 0.02s
 
 - Error Handling
   - Custom error pages
-  - Secure error messages## Roadmap
+  - Secure error messages
+
+## Roadmap
 3. Add request routing
 4. Add static file serving
 5. Implement WebSocket support
@@ -92,7 +89,6 @@ All tests passing with successful completion in 0.02s
 8. Add Docker support
 9. Add CI/CD pipeline
 10. Add load balancing
-
 
 ## License
 MIT Licensed. See LICENSE for details.
