@@ -11,9 +11,6 @@ pub struct ServerConfig {
     pub port: u16,
     pub tls_cert_path: String,
     pub tls_key_path: String,
-    pub min_tls_version: String,
-    pub cipher_suite: String,
-    pub ocsp_responder: String,
 }
 
 impl Config {
@@ -25,9 +22,6 @@ impl Config {
             port: env::var("SERVER_PORT").unwrap_or_else(|_| "443".to_string()).parse().context("Failed to parse SERVER_PORT")?,
             tls_cert_path: env::var("TLS_CERT_PATH").unwrap_or_else(|_| "/etc/ssl/certs/devops.nceak.cert".to_string()),
             tls_key_path: env::var("TLS_KEY_PATH").unwrap_or_else(|_| "/etc/ssl/private/devops.nceak.key".to_string()),
-            min_tls_version: env::var("TLS_MIN_VERSION").unwrap_or_else(|_| "TLS1.3".to_string()),
-            cipher_suite: env::var("TLS_CIPHER_SUITE").unwrap_or_else(|_| "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384".to_string()),
-            ocsp_responder: env::var("OCSP_RESPONDER_URL").unwrap_or_else(|_| "".to_string()),
         };
 
         Ok(Config { server })

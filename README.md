@@ -15,10 +15,11 @@
   - Per-client IP rate limiting
   - Configurable limits
 
-- Static File Serving
-  - Efficient static file delivery
-  - Custom styled landing page
-  - Index file support
+- Security Headers
+  - Strict Transport Security (HSTS)
+  - X-Frame-Options
+  - Content Security Policy (CSP)
+  - X-Content-Type-Options
 
 - SSL/TLS Support
   - OpenSSL integration
@@ -27,6 +28,17 @@
   - TLS 1.3 support
   - OCSP stapling
 
+- Input Validation
+  - Request size limits (4kb)
+  - JSON validation
+  - Custom validation rules
+
+- Error Handling
+  - Custom error types
+  - Proper error responses
+  - Validation error handling
+  - Authentication error handling
+
 - Logging
   - Default logging middleware
   - Request logging
@@ -34,11 +46,15 @@
 ## Completed Tests
 
 - Security Headers Tests
-  - Verification of security header configurations
-  
+  - HSTS header verification
+  - CSP header validation
+  - X-Frame-Options verification
+  - X-Content-Type-Options validation
+
 - Rate Limiting Tests
   - Request rate limiting functionality validation
-  
+  - Rate limit configuration testing
+
 - TLS Configuration Tests
   - SSL Acceptor creation verification
   - Private key loading validation
@@ -50,15 +66,18 @@
 
 - Input Validation Tests
   - Request validation checks
+  - JSON payload validation
+  - Size limit validation
+
+- Error Handling Tests
+  - Authentication error handling
+  - Authorization error responses
+  - Validation error formatting
+  - Internal error handling
 
 All tests passing with successful completion in 0.02s
 
 ## Security Features To Complete
-
-- Input Validation
-  - Request size limits
-  - Content type validation
-  - Input sanitization
 
 - Authentication & Authorization
   - Session management
@@ -75,10 +94,6 @@ All tests passing with successful completion in 0.02s
   - Regular dependency updates
   - Security vulnerability scanning
   - cargo-audit integration
-
-- Error Handling
-  - Custom error pages
-  - Secure error messages
 
 ## Roadmap
 3. Add request routing
