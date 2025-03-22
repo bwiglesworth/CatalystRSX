@@ -7,7 +7,7 @@
 
 ## A high-performance full stack server & Web framework written in Rust.
 
-## Completed Features
+## Completed Features 1
 - Rate Limiting
   - Request rate limiting with burst control
   - Per-client IP rate limiting
