@@ -9,13 +9,6 @@
 ## A high-performance full stack server & Web framework written in Rust.
 
 ## Completed Features
-- Security Headers
-  - HTTP Security Headers (HSTS, CSP, X-Frame-Options)
-  - Strict Content Security Policy
-  - XSS Protection
-  - Frame Options Protection
-  - Referrer Policy
-
 - Rate Limiting
   - Request rate limiting with burst control
   - Per-client IP rate limiting
@@ -65,7 +58,6 @@
 - Error Handling
   - Custom error pages
   - Secure error messages
-
 ## Roadmap
 3. Add request routing
 4. Add static file serving
