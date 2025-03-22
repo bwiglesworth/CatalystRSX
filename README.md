@@ -23,6 +23,9 @@
 - SSL/TLS Support
   - OpenSSL integration
   - Secure HTTPS configuration
+  - Modern cipher suites
+  - TLS 1.3 support
+  - OCSP stapling
 
 - Logging
   - Default logging middleware
