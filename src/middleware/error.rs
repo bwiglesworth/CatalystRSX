@@ -1,22 +1,20 @@
 use actix_web::{
-    middleware::{ErrorHandlers, ErrorHandlerResponse},
     http::StatusCode,
+    middleware::{ErrorHandlers, ErrorHandlerResponse},
+    web, Result,
     dev::ServiceResponse,
-    body::{MessageBody, EitherBody},
-    web::Bytes,
+    body::{MessageBody, EitherBody, BoxBody},
 };
-pub fn error_handlers(cfg: &mut actix_web::web::ServiceConfig) {
-    let error_handlers = ErrorHandlers::<Bytes>::new()
-        .handler(StatusCode::INTERNAL_SERVER_ERROR, handle_error)
-        .handler(StatusCode::BAD_REQUEST, handle_error)
-        .handler(StatusCode::UNAUTHORIZED, handle_error)
-        .handler(StatusCode::FORBIDDEN, handle_error)
-        .handler(StatusCode::NOT_FOUND, handle_error);
 
-    cfg.app_data(error_handlers);
+pub fn error_handlers(cfg: &mut web::ServiceConfig) {
+    let error_handlers = ErrorHandlers::new()
+        .handler(StatusCode::INTERNAL_SERVER_ERROR, handle_error)
+        .handler(StatusCode::NOT_FOUND, handle_error);
+    
+    cfg.service(web::scope("").wrap(error_handlers));
 }
 
-fn handle_error<B>(res: ServiceResponse<B>) -> Result<ErrorHandlerResponse<B>, actix_web::Error>
+pub fn handle_error<B>(res: ServiceResponse<B>) -> Result<ErrorHandlerResponse<B>> 
 where
     B: MessageBody + 'static,
 {
@@ -24,9 +22,12 @@ where
     Ok(ErrorHandlerResponse::Response(response))
 }
 
-fn get_error_response<B>(res: ServiceResponse<B>) -> Result<ServiceResponse<EitherBody<B>>, actix_web::Error>
+fn get_error_response<B>(res: ServiceResponse<B>) -> Result<ServiceResponse<EitherBody<B>>> 
 where
     B: MessageBody + 'static,
 {
-    Ok(res.map_into_left_body())
+    Ok(res.map_body(|_, _| {
+            EitherBody::Right {
+                body: BoxBody::new("Error occurred")
+            }    }))
 }
