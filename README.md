@@ -9,7 +9,7 @@
 
 A high-performance security platform written in Rust, designed to provide enterprise-grade protection for modern web applications.
 
-## Completed Features
+## Completed Features and Tests
 
 - Rate Limiting
   - Request rate limiting with burst control
@@ -117,7 +117,7 @@ A high-performance security platform written in Rust, designed to provide enterp
 
 All tests passing with successful completion in 0.02s
 
-## Completed Features
+## Completed Features w/out Tests
 
 - Request Routing
   - API endpoint structure
