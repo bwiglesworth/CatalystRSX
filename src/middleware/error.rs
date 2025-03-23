@@ -1,22 +1,32 @@
 use actix_web::{
-    dev::ServiceResponse,
-    middleware::{ErrorHandlerResponse, ErrorHandlers},
+    middleware::{ErrorHandlers, ErrorHandlerResponse},
     http::StatusCode,
-    body::{BoxBody, MessageBody},
+    dev::ServiceResponse,
+    body::{MessageBody, EitherBody},
+    web::Bytes,
 };
-use crate::error::AppError;
+pub fn error_handlers(cfg: &mut actix_web::web::ServiceConfig) {
+    let error_handlers = ErrorHandlers::<Bytes>::new()
+        .handler(StatusCode::INTERNAL_SERVER_ERROR, handle_error)
+        .handler(StatusCode::BAD_REQUEST, handle_error)
+        .handler(StatusCode::UNAUTHORIZED, handle_error)
+        .handler(StatusCode::FORBIDDEN, handle_error)
+        .handler(StatusCode::NOT_FOUND, handle_error);
 
-pub fn error_handlers() -> ErrorHandlers<BoxBody> {
-    ErrorHandlers::new()
-        .handler(StatusCode::INTERNAL_SERVER_ERROR, |res| {
-            let res = get_error_response(res, AppError::InternalError);
-            Ok(ErrorHandlerResponse::Response(res.map_into_left_body()))
-        })
-        .handler(StatusCode::BAD_REQUEST, |res| {
-            let res = get_error_response(res, AppError::ValidationError("Bad Request".to_string()));
-            Ok(ErrorHandlerResponse::Response(res.map_into_left_body()))
-        })
+    cfg.app_data(error_handlers);
 }
 
-fn get_error_response<B: MessageBody + 'static>(res: ServiceResponse<B>, _error: AppError) -> ServiceResponse<BoxBody> {
-    res.map_into_boxed_body()}
+fn handle_error<B>(res: ServiceResponse<B>) -> Result<ErrorHandlerResponse<B>, actix_web::Error>
+where
+    B: MessageBody + 'static,
+{
+    let response = get_error_response(res)?;
+    Ok(ErrorHandlerResponse::Response(response))
+}
+
+fn get_error_response<B>(res: ServiceResponse<B>) -> Result<ServiceResponse<EitherBody<B>>, actix_web::Error>
+where
+    B: MessageBody + 'static,
+{
+    Ok(res.map_into_left_body())
+}

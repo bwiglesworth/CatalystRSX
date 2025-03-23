@@ -16,6 +16,7 @@ actix-session = { version = "0.7", features = ["cookie-session"] }
 actix-identity = "0.5"
 actix-governor = "0.4"
 thiserror = "1.0"
+futures = "0.3"
 
 # TLS/SSL
 openssl = "0.10"
