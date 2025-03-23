@@ -43,6 +43,12 @@
   - Default logging middleware
   - Request logging
 
+- Authentication & Authorization
+  - Session management
+  - Session-based authentication
+  - Protected route guards
+  - Secure cookie handling
+
 ## Completed Tests
 
 - Security Headers Tests
@@ -75,14 +81,15 @@
   - Validation error formatting
   - Internal error handling
 
+- Authentication Tests
+  - Protected route authorization
+  - Session cookie validation
+  - Unauthorized access handling
+  - Session guard verification
+
 All tests passing with successful completion in 0.02s
 
 ## Security Features To Complete
-
-- Authentication & Authorization
-  - Session management
-  - CSRF protection
-  - Secure cookie handling
 
 - Logging & Monitoring
   - Security event logging
@@ -94,7 +101,6 @@ All tests passing with successful completion in 0.02s
   - Regular dependency updates
   - Security vulnerability scanning
   - cargo-audit integration
-
 ## Roadmap
 3. Add request routing
 4. Add static file serving
