@@ -3,7 +3,67 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use std::collections::HashMap;
 use std::sync::Mutex;
 use actix_web::dev::ServiceRequest;
+use serde::{Serialize, Deserialize};
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct AuthAttempt {
+    timestamp: u64,
+    ip: String,
+    path: String,
+    success: bool,
+    user_agent: String,
+}
+
+pub struct AuthTracker {
+    attempts: Mutex<Vec<AuthAttempt>>,
+    max_entries: usize,
+}
+
+impl AuthTracker {
+    pub fn new(max_entries: usize) -> Self {
+        AuthTracker {
+            attempts: Mutex::new(Vec::new()),
+            max_entries,
+        }
+    }
+
+    pub fn record_attempt(&self, attempt: AuthAttempt) {
+        let mut attempts = self.attempts.lock().unwrap();
+        attempts.push(attempt);
+        if attempts.len() > self.max_entries {
+            attempts.remove(0); // Remove oldest entry when limit reached
+        }
+    }
+}
+
+impl SecurityLogger {
+    // Add auth tracking to existing implementation
+    pub fn track_auth_attempt(&self, req: &ServiceRequest, success: bool) {
+        let timestamp = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
+            
+        let conn_info = req.connection_info();
+        let ip = conn_info.peer_addr().unwrap_or("unknown").to_string();
+        let user_agent = req.headers()
+            .get("User-Agent")
+            .and_then(|h| h.to_str().ok())
+            .unwrap_or("unknown")
+            .to_string();
+
+        let attempt = AuthAttempt {
+            timestamp,
+            ip,
+            path: req.path().to_string(),
+            success,
+            user_agent,
+        };
+
+        let tracker = AuthTracker::new(1000); // Keep last 1000 attempts
+        tracker.record_attempt(attempt);
+    }
+}
 #[derive(Default)]
 pub struct ActivityTracker {
     failed_attempts: Mutex<HashMap<String, Vec<u64>>>,

@@ -1,10 +1,6 @@
-use actix_web::{test, App, web, HttpResponse};
-use crate::error::AppError;
-use crate::middleware::error::error_handlers;
-
 #[cfg(test)]
 mod tests {
-    use actix_web::{test, App, web, HttpResponse};
+   use actix_web::{test, App, web, HttpResponse};
     use crate::error::AppError;
     use crate::middleware::error::error_handlers;
 

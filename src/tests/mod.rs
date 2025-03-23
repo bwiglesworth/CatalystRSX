@@ -7,6 +7,8 @@ mod rate_limit_test;
 #[cfg(test)]
 mod validation_test;
 #[cfg(test)]
+mod error_test;
+#[cfg(test)]
 mod server_test;
 #[cfg(test)]
 mod session_test;
