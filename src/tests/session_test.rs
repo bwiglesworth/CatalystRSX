@@ -2,7 +2,7 @@
 mod tests {
     use actix_web::{test, web, App, HttpResponse};
     use actix_session::Session;
-    use std::time::Duration;
+    
 
     #[actix_web::test]
     async fn test_session_timeout() {

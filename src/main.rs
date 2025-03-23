@@ -8,7 +8,6 @@ use actix_web::middleware::Logger;
 use actix_governor::{Governor, GovernorConfigBuilder};
 use actix_files as fs;
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
-use actix_session::SessionExt;
 use crate::middleware::error::error_handlers;
 use crate::auth::session::configure_session;
 use crate::auth::guard::SessionGuard;#[actix_web::main]
