@@ -11,5 +11,6 @@ mod server_test;
 #[cfg(test)]
 mod session_test;
 #[cfg(test)]
+mod security_log_test;
 #[cfg(test)]
 mod guard_test;
