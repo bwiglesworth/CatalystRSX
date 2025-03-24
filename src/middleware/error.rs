@@ -1,33 +1,61 @@
 use actix_web::{
-    http::StatusCode,
-    middleware::{ErrorHandlers, ErrorHandlerResponse},
-    web, Result,
-    dev::ServiceResponse,
-    body::{MessageBody, EitherBody, BoxBody},
+    dev::{Service, ServiceRequest, ServiceResponse, Transform},
+    Error, HttpResponse,
+    body::EitherBody,
 };
+use futures::future::{ok, Ready};
+use std::future::Future;
+use std::pin::Pin;
+use std::task::{Context, Poll};
 
-pub fn error_handlers(cfg: &mut web::ServiceConfig) {
-    let error_handlers = ErrorHandlers::new()
-        .handler(StatusCode::INTERNAL_SERVER_ERROR, handle_error)
-        .handler(StatusCode::NOT_FOUND, handle_error);
-    
-    cfg.service(web::scope("").wrap(error_handlers));
+pub struct ErrorHandler;
+
+impl<S, B> Transform<S, ServiceRequest> for ErrorHandler
+where
+    S: Service<ServiceRequest, Response = ServiceResponse<B>, Error = Error> + 'static,
+    B: 'static,
+{
+    type Response = ServiceResponse<EitherBody<B>>;
+    type Error = Error;
+    type Transform = ErrorHandlerMiddleware<S>;
+    type InitError = ();
+    type Future = Ready<Result<Self::Transform, Self::InitError>>;
+
+    fn new_transform(&self, service: S) -> Self::Future {
+        ok(ErrorHandlerMiddleware { service })
+    }
 }
 
-pub fn handle_error<B>(res: ServiceResponse<B>) -> Result<ErrorHandlerResponse<B>> 
-where
-    B: MessageBody + 'static,
-{
-    let response = get_error_response(res)?;
-    Ok(ErrorHandlerResponse::Response(response))
+pub struct ErrorHandlerMiddleware<S> {
+    service: S,
 }
 
-fn get_error_response<B>(res: ServiceResponse<B>) -> Result<ServiceResponse<EitherBody<B>>> 
+impl<S, B> Service<ServiceRequest> for ErrorHandlerMiddleware<S>
 where
-    B: MessageBody + 'static,
+    S: Service<ServiceRequest, Response = ServiceResponse<B>, Error = Error> + 'static,
+    B: 'static,
 {
-    Ok(res.map_body(|_, _| {
-            EitherBody::Right {
-                body: BoxBody::new("Error occurred")
-            }    }))
+    type Response = ServiceResponse<EitherBody<B>>;
+    type Error = Error;
+    type Future = Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>>>>;
+
+    fn poll_ready(&self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        self.service.poll_ready(cx)
+    }
+
+    fn call(&self, req: ServiceRequest) -> Self::Future {
+        let (http_req, payload) = req.into_parts();
+        let req = ServiceRequest::from_parts(http_req.clone(), payload);
+        let fut = self.service.call(req);
+        
+        Box::pin(async move {
+            match fut.await {
+                Ok(res) => Ok(res.map_into_left_body()),
+                Err(_) => {
+                    let res = HttpResponse::InternalServerError().finish();
+                    Ok(ServiceResponse::new(http_req, res).map_into_right_body())
+                }
+            }
+        })
+    }
 }

@@ -19,6 +19,8 @@ thiserror = "1.0"
 futures = "0.3"
 dioxus = "0.4"
 dioxus-ssr = "0.4"
+rand = "0.8"
+base64 = "0.21"
 
 # TLS/SSL
 openssl = "0.10"

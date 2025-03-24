@@ -81,58 +81,27 @@ A high-performance security platform written in Rust, designed to provide enterp
 
 ## Completed Tests
 
-- Security Headers Tests
-  - HSTS header verification
-  - CSP header validation
-  - X-Frame-Options verification
-  - X-Content-Type-Options validation
-  - Custom header configuration testing
-
-- Rate Limiting Tests
-  - Request rate limiting functionality validation
-  - Rate limit configuration testing
-  - Burst control verification
-  - IP tracking validation
-
-- TLS Configuration Tests
-  - SSL Acceptor creation verification
-  - Private key loading validation
-  - Certificate chain loading verification
-  - Private key integrity checks
-  - TLS version verification
-  - Cipher suite validation
-  - OCSP configuration testing
-
-- Input Validation Tests
-  - Request validation checks
-  - JSON payload validation
-  - Size limit validation
-  - Type checking verification
-  - Sanitization testing
-
-- Error Handling Tests
-  - Authentication error handling
-  - Authorization error responses
-  - Validation error formatting
-  - Internal error handling
-  - Error logging verification
-
-- Authentication Tests
-  - Protected route authorization
-  - Session cookie validation
-  - Unauthorized access handling
-  - Session guard verification
-  - Timeout management testing
-  - IP-based auth tracking
-
-- Security Logging Tests
-  - Event logging verification
-  - Audit trail validation
-  - Suspicious activity detection
-  - Authentication attempt tracking
-
-All tests passing with successful completion in 0.02s
-
+| Error Handling Tests | Security & Infrastructure Tests |
+|---------------------|--------------------------------|
+| Authentication Errors | Security Headers |
+| Authorization Errors | TLS Configuration |
+| Validation Errors | Certificate Verification |
+| Database Errors | Rate Limiting |
+| Session Errors | Session Security |
+| Cache Errors | Session Timeout |
+| Configuration Errors | Protected Route Authorization |
+| External Service Errors | Security Logging |
+| Media Type Errors | Server Health |
+| Not Found Errors | |
+| Middleware Errors | |
+| Payload Errors | |
+| Serialization Errors | |
+| Template Errors | |
+| Timeout Errors | |
+| HTTP Method Errors (PUT, DELETE, PATCH) | |
+| Query Parameter Validation Errors | |
+| Request Body Size Limit Errors | |
+| Malformed Body Handling Errors | |
 ## Features To Complete
 
 - Cross-Site Request Forgery Protection
