@@ -110,11 +110,6 @@ A high-performance security platform written in Rust, designed to provide enterp
 | Malformed Body Handling Errors | |
 ## Features To Complete
 
-- Cross-Site Request Forgery Protection
-  - Token generation and validation
-  - Form protection
-  - API endpoint protection
-
 - XSS Prevention
   - HTML escaping
   - Content sanitization
