@@ -8,7 +8,6 @@
 ## Enterprise Web Security as a Service
 
 A high-performance security platform written in Rust, designed to provide enterprise-grade protection for modern web applications.
-
 ## Completed Features
 
 - Rate Limiting
@@ -78,6 +77,14 @@ A high-performance security platform written in Rust, designed to provide enterp
   - Dependency version pinning
   - Supply chain security
 
+- Cross-Site Request Forgery Protection
+  - Token generation and validation
+  - Form protection
+  - API endpoint protection
+  - CSRF middleware implementation
+  - Token verification system
+  - Secure token storage
+
 
 ## Completed Tests
 
@@ -88,8 +95,7 @@ A high-performance security platform written in Rust, designed to provide enterp
 | Validation Errors | Certificate Verification |
 | Database Errors | Rate Limiting |
 | Session Errors | Session Security |
-| Cache Errors | Session Timeout |
-| Configuration Errors | Protected Route Authorization |
+| Cache Errors | Session Timeout || Configuration Errors | Protected Route Authorization |
 | External Service Errors | Security Logging |
 | Media Type Errors | Server Health |
 | Not Found Errors | |
