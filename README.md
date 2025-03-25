@@ -5,7 +5,7 @@
 ![Version](https://img.shields.io/badge/Version-0.6.0-blue)
 ![Release Date](https://img.shields.io/badge/Production%20Release-Jan%201%202026-yellow)
 
-## Enterprise Web Security as a Service
+## Enterprise Web Hosting Software as a Service
 
 A high-performance security platform written in Rust, designed to provide enterprise-grade protection for modern web applications.
 ## Completed Features
