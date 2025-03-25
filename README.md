@@ -7,7 +7,7 @@
 
 ## Enterprise Web Hosting Software as a Service
 
-A high-performance security platform written in Rust, designed to provide enterprise-grade protection for modern web applications.
+A high-performance Web Hosting platform written in Rust, designed to provide enterprise-grade protection for modern web applications.
 ## Completed Features
 
 - Rate Limiting
