@@ -11,6 +11,8 @@ impl XssMiddleware {
         content
             .replace("&", "&")
             .replace("<", "<")
-            .replace(">", ">")
-    }
+            .replace(">", ">")            
+            .replace("\u{27}", "'")
+            .replace("\\\"", "&quote;")  
+          }
 }
