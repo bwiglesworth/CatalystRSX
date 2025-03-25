@@ -87,19 +87,19 @@ A high-performance Web Hosting platform written in Rust, designed to provide ent
   - XSS Prevention
 
   - HTML escaping
-  - Content sanitization
-  - Secure content rendering
-  - Input sanitization
-  - Script injection prevention
-  - Data URI filtering
+    - Content sanitization
+    - Secure content rendering
+    - Input sanitization
+    - Script injection prevention
+    - Data URI filtering
 
   - Enhanced Security Headers
-  - Referrer-Policy
-  - Content-Security-Policy
-  - X-Content-Type-Options
-  - Custom policy configuration
-  - Header validation system
-  - Security policy enforcement
+    - Referrer-Policy
+    - Content-Security-Policy
+    - X-Content-Type-Options
+    - Custom policy configuration
+    - Header validation system
+    - Security policy enforcement
 
 
 ## Completed Tests
