@@ -6,12 +6,29 @@ pub struct CSPBuilder {
 
 impl CSPBuilder {
     pub fn new() -> Self {
-        let mut directives = HashMap::new();
-        directives.insert("default-src".to_string(), vec!["'self'".to_string()]);
-        directives.insert("script-src".to_string(), vec!["'self'".to_string()]);
-        directives.insert("style-src".to_string(), vec!["'self'".to_string()]);
-        directives.insert("img-src".to_string(), vec!["'self'".to_string()]);
-        Self { directives }
+        CSPBuilder {
+            directives: HashMap::new()
+        }
+    }
+
+    pub fn default_src(mut self, sources: Vec<&str>) -> Self {
+        self.directives.insert("default-src".to_string(), sources.iter().map(|s| s.to_string()).collect());
+        self
+    }
+
+    pub fn script_src(mut self, sources: Vec<&str>) -> Self {
+        self.directives.insert("script-src".to_string(), sources.iter().map(|s| s.to_string()).collect());
+        self
+    }
+
+    pub fn style_src(mut self, sources: Vec<&str>) -> Self {
+        self.directives.insert("style-src".to_string(), sources.iter().map(|s| s.to_string()).collect());
+        self
+    }
+
+    pub fn img_src(mut self, sources: Vec<&str>) -> Self {
+        self.directives.insert("img-src".to_string(), sources.iter().map(|s| s.to_string()).collect());
+        self
     }
 
     pub fn build(&self) -> String {

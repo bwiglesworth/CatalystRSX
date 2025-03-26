@@ -1,8 +1,18 @@
 #[cfg(test)]
 mod tests {
-    use actix_web::{test, App};
-    use catalyst_rsx::middleware::SecurityHeaders;    
-    
+    use actix_web::{test, web, App, HttpResponse};
+    use actix_web::test::TestRequest;
+    use catalyst_rsx::middleware::SecurityHeaders;
+    use catalyst_rsx::security::headers::{
+        ReferrerPolicy,
+        ReferrerPolicyBuilder,
+        FeaturePolicy,
+        FeaturePolicyBuilder,
+        ExpectCTBuilder,
+        XFrameOptions,
+        XFrameOptionsBuilder
+    };
+
     #[actix_web::test]
     async fn test_security_headers() {
         let app = test::init_service(
@@ -41,5 +51,124 @@ mod tests {
         assert!(csp.to_str().unwrap().contains("script-src 'self'"));
         assert!(csp.to_str().unwrap().contains("style-src 'self'"));
         assert!(csp.to_str().unwrap().contains("img-src 'self'"));
+    }
+
+    #[actix_web::test]
+    async fn test_referrer_policy() {
+        let builder = ReferrerPolicyBuilder::new();
+        let policy = builder
+            .set_policy(ReferrerPolicy::StrictOrigin)
+            .build();
+        
+        assert_eq!(policy, "strict-origin");
+    }
+
+    #[actix_web::test]
+    async fn test_security_headers_feature_policy() {
+        let app = test::init_service(
+            App::new()
+                .wrap(SecurityHeaders::new())
+                .route("/", web::get().to(|| async { HttpResponse::Ok().body("test") }))
+        ).await;
+
+        let req = TestRequest::get().uri("/").to_request();
+        let resp = test::call_service(&app, req).await;
+            
+        let feature_policy = resp.headers().get("Feature-Policy").unwrap();
+        assert!(feature_policy.to_str().unwrap().contains("camera 'none'"));
+        assert!(feature_policy.to_str().unwrap().contains("microphone 'self'"));
+        assert!(feature_policy.to_str().unwrap().contains("payment https://payment.example.com"));
+    }
+
+    #[actix_web::test]
+    async fn test_feature_policy_empty_builder() {
+        let builder = FeaturePolicyBuilder::new();
+        assert_eq!(builder.build(), "");
+    }
+
+    #[actix_web::test]
+    async fn test_feature_policy_multiple_features() {
+        let mut builder = FeaturePolicyBuilder::new();
+        builder
+            .add_feature("geolocation", FeaturePolicy::Self_)
+            .add_feature("camera", FeaturePolicy::None)
+            .add_feature("autoplay", FeaturePolicy::All);
+        
+        let policy = builder.build();
+        assert!(policy.contains("geolocation 'self'"));
+        assert!(policy.contains("camera 'none'"));
+        assert!(policy.contains("autoplay *"));
+    }
+
+    #[actix_web::test]
+    async fn test_feature_policy_origins_list() {
+        let mut builder = FeaturePolicyBuilder::new();
+        let origins = vec![
+            "https://trusted1.example.com".to_string(),
+            "https://trusted2.example.com".to_string()
+        ];
+        builder.add_feature("payment", FeaturePolicy::Origins(origins));
+        
+        let policy = builder.build();
+        assert!(policy.contains("payment https://trusted1.example.com https://trusted2.example.com"));
+    }
+
+    #[actix_web::test]
+    async fn test_expect_ct_default() {
+        let builder = ExpectCTBuilder::new();
+        let header = builder.build();
+        assert!(header.contains("max-age=86400"));
+        assert!(header.contains("enforce"));
+    }
+
+    #[actix_web::test]
+    async fn test_expect_ct_custom() {
+        let builder = ExpectCTBuilder::new()
+            .max_age(3600)
+            .enforce(false)
+            .report_uri("https://example.com/report".to_string());
+        
+        let header = builder.build();
+        assert!(header.contains("max-age=3600"));
+        assert!(!header.contains("enforce"));
+        assert!(header.contains("report-uri=\"https://example.com/report\""));
+    }
+
+    #[actix_web::test]
+    async fn test_x_frame_options_default() {
+        let builder = XFrameOptionsBuilder::new();
+        let header = builder.build();
+        assert_eq!(header, "SAMEORIGIN");
+    }
+
+    #[actix_web::test]
+    async fn test_x_frame_options_deny() {
+        let builder = XFrameOptionsBuilder::new()
+            .set_option(XFrameOptions::Deny);
+        let header = builder.build();
+        assert_eq!(header, "DENY");
+    }
+
+    #[actix_web::test]
+    async fn test_x_frame_options_allow_from() {
+        let builder = XFrameOptionsBuilder::new()
+            .set_option(XFrameOptions::AllowFrom("https://trusted.example.com".to_string()));
+        let header = builder.build();
+        assert_eq!(header, "ALLOW-FROM https://trusted.example.com");
+    }
+
+    #[actix_web::test]
+    async fn test_x_frame_options_middleware() {
+        let app = test::init_service(
+            App::new()
+                .wrap(SecurityHeaders::new())
+                .route("/", web::get().to(|| async { HttpResponse::Ok().body("test") }))
+        ).await;
+
+        let req = TestRequest::get().uri("/").to_request();
+        let resp = test::call_service(&app, req).await;
+    
+        let x_frame_options = resp.headers().get("X-Frame-Options").unwrap();
+        assert_eq!(x_frame_options.to_str().unwrap(), "SAMEORIGIN");
     }
 }
