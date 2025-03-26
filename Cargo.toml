@@ -22,6 +22,7 @@ dioxus-ssr = "0.4"
 rand = "0.8"
 once_cell = "1.18"
 
+
 # TLS/SSL
 openssl = "0.10"
 rustls = "0.21"
@@ -43,3 +44,4 @@ sqlx = { version = "0.7", features = ["runtime-tokio-native-tls", "mysql"] }
 tokio = { version = "1.0", features = ["full"] }
 aes-gcm = "0.10.3"
 base64 = "0.21.5"
+chrono = "0.4"
