@@ -186,5 +186,7 @@ A high-performance Web Hosting platform written in Rust, designed to provide ent
   - Configuration management
   - Docker containerization
   - CI/CD pipeline
-  - Load balancing## License
+  - Load balancing
+  
+## License
 MIT Licensed. See LICENSE for details...
