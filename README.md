@@ -122,20 +122,6 @@ A high-performance Web Hosting platform written in Rust, designed to provide ent
 
 ## Completed Tests
 
-- Security Headers Tests
-  - CSP headers validation
-  - X-Frame-Options configuration
-  - Feature-Policy implementation
-  - Expect-CT settings
-  - Security headers middleware
-
-- Password Security Tests
-  - Password hashing verification
-  - Password policy compliance
-  - Password history tracking
-  - Password expiration checks
-  - Edge case handling
-
 | Error Handling Tests | Security & Infrastructure Tests |
 |---------------------|--------------------------------|
 | Authentication Errors | Security Headers |
@@ -156,8 +142,13 @@ A high-performance Web Hosting platform written in Rust, designed to provide ent
 | HTTP Method Errors (PUT, DELETE, PATCH) | Safe Query Execution |
 | Query Parameter Validation Errors | Data Encryption |
 | Request Body Size Limit Errors | Key Rotation |
-| Malformed Body Handling Errors | |
-
+| Malformed Body Handling Errors | Feature-Policy Implementation |
+| | Expect-CT Settings |
+| | Password Hashing Verification |
+| | Password Policy Compliance |
+| | Password History Tracking |
+| | Password Expiration Checks |
+| | Password Edge Cases |
 ## Features To Complete
 
 - API Security
@@ -189,26 +180,26 @@ A high-performance Web Hosting platform written in Rust, designed to provide ent
   - Load balancing
 
 - High Availability To Complete
- - Active-Active Configuration
- - Multiple nodes running simultaneously
- - Load balancer distributing traffic across nodes
- - Each node maintains session state synchronization
- - Shared database cluster for consistent data access
- - Health Check Integration
- - Regular node health monitoring
- - Automatic failover when issues detected
- - Service discovery for dynamic node registration
- - Load balancer health probe responses
- - Data Replication
- - Database replication across nodes
- - Cache synchronization between instances
- - Distributed session management
- - Consistent state maintenance
- - Scaling Strategies
- - Horizontal scaling for increased capacity
- - Dynamic node addition/removal
- - Geographic distribution for regional redundancy
- - Auto-scaling based on load metrics
+  - Active-Active Configuration
+  - Multiple nodes running simultaneously
+  - Load balancer distributing traffic across nodes
+  - Each node maintains session state synchronization
+  - Shared database cluster for consistent data access
+  - Health Check Integration
+  - Regular node health monitoring
+  - Automatic failover when issues detected
+  - Service discovery for dynamic node registration
+  - Load balancer health probe responses
+  - Data Replication
+  - Database replication across nodes
+  - Cache synchronization between instances
+  - Distributed session management
+  - Consistent state maintenance
+  - Scaling Strategies
+  - Horizontal scaling for increased capacity
+  - Dynamic node addition/removal
+  - Geographic distribution for regional redundancy
+  - Auto-scaling based on load metrics
   
 ## License
 MIT Licensed. See LICENSE for details...
