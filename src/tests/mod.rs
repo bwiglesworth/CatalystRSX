@@ -22,3 +22,5 @@ mod xss_test;
 mod db_test;
 #[cfg(test)]
 mod query_test;
+#[cfg(test)]
+mod encryption_test;
