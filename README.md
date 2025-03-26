@@ -177,6 +177,7 @@ A high-performance Web Hosting platform written in Rust, designed to provide ent
   - Configuration management
   - Docker containerization
   - CI/CD pipeline
+  - High-Availability (HA) Support
 
 - Administrative Dashboard
   - Security Metrics Display
