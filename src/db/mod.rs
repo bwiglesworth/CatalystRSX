@@ -1,12 +1,14 @@
 use sqlx::mysql::{MySqlPool, MySqlConnectOptions};
+use sqlx::pool::PoolOptions;
+use sqlx::MySql;
 use anyhow::Result;
 use dotenv::dotenv;
 use std::env;
+use std::time::Duration;
 
 pub type DbPool = MySqlPool;
 
 pub mod query;
-
 pub async fn create_pool() -> Result<DbPool> {
     dotenv().ok();
     let db_pass = env::var("DB_PASSWORD").expect("DB_PASSWORD must be set");
@@ -17,6 +19,14 @@ pub async fn create_pool() -> Result<DbPool> {
         .password(&db_pass)
         .database("catalystrsx")
         .ssl_mode(sqlx::mysql::MySqlSslMode::Required);
-    let pool = MySqlPool::connect_with(options).await?;
+
+    let pool = PoolOptions::<MySql>::new()
+        .max_connections(32)
+        .min_connections(5)
+        .max_lifetime(Duration::from_secs(3600))
+        .idle_timeout(Duration::from_secs(600))
+        .connect_with(options)
+        .await?;
+
     Ok(pool)
 }

@@ -1,26 +1,35 @@
 use catalyst_rsx::db::*;
 use anyhow::Result;
 use sqlx::Row;
+use std::time::Duration;
 
 #[tokio::test]
 async fn test_database_connectivity() -> Result<()> {
     let pool = create_pool().await?;
     
-    // Check if SSL is being used
     let row = sqlx::query("SHOW STATUS LIKE 'Ssl_cipher'")
         .fetch_one(&pool)
         .await?;
         
     let cipher: String = row.get(1);
-    println!("SSL Cipher in use: {}", cipher);
-    assert!(!cipher.is_empty(), "Connection should be encrypted");
+    assert!(!cipher.is_empty());
+    Ok(())
+}
 
-    // Additional SSL verification
-    let version: String = sqlx::query("SHOW STATUS LIKE 'Ssl_version'")
-        .fetch_one(&pool)
-        .await?
-        .get(1);
-    println!("SSL Version: {}", version);
+#[tokio::test]
+async fn test_pool_configuration() -> Result<()> {
+    let pool = create_pool().await?;
     
+    // Test multiple concurrent connections
+    let mut handles = vec![];
+    for _ in 0..10 {
+        let pool = pool.clone();
+        handles.push(tokio::spawn(async move {
+            let _conn = pool.acquire().await.unwrap();
+            tokio::time::sleep(Duration::from_millis(100)).await;
+        }));
+    }
+    
+    futures::future::join_all(handles).await;
     Ok(())
 }
