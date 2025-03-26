@@ -18,3 +18,5 @@ mod security_log_test;
 mod guard_test;
 #[cfg(test)]
 mod xss_test;
+#[cfg(test)]
+mod db_test;

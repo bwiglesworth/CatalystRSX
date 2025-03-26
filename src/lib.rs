@@ -7,3 +7,4 @@ pub mod routing;
 pub mod templates;
 pub mod auth;
 pub mod security;
+pub mod db;
