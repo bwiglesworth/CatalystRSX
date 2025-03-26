@@ -24,3 +24,5 @@ mod db_test;
 mod query_test;
 #[cfg(test)]
 mod encryption_test;
+#[cfg(test)]
+mod password_test;

@@ -21,6 +21,7 @@ dioxus = "0.4"
 dioxus-ssr = "0.4"
 rand = "0.8"
 once_cell = "1.18"
+argon2 = "0.5.2"
 
 
 # TLS/SSL
