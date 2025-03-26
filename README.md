@@ -10,23 +10,24 @@
 A high-performance Web Hosting platform written in Rust, designed to provide enterprise-grade protection for modern web applications.
 ## Completed Features
 
-- [x] Security Headers
+- Security Headers
   - Content Security Policy (CSP)
   - X-Frame-Options
   - X-Content-Type-Options
   - X-XSS-Protection
   - Strict-Transport-Security (HSTS)
+
+- Enhanced Security Headers
   - Referrer-Policy
   - Feature-Policy
   - Expect-CT
   - Clear-Site-Data
 
-- [x] Password Security
+- Password Security
   - Argon2id password hashing
   - Password policy enforcement
   - Password history tracking
   - Password expiration checks
-
 - Rate Limiting
   - Request rate limiting with burst control
   - Per-client IP rate limiting
