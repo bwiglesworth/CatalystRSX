@@ -10,19 +10,29 @@
 A high-performance Web Hosting platform written in Rust, designed to provide enterprise-grade protection for modern web applications.
 ## Completed Features
 
+- [x] Security Headers
+  - Content Security Policy (CSP)
+  - X-Frame-Options
+  - X-Content-Type-Options
+  - X-XSS-Protection
+  - Strict-Transport-Security (HSTS)
+  - Referrer-Policy
+  - Feature-Policy
+  - Expect-CT
+  - Clear-Site-Data
+
+- [x] Password Security
+  - Argon2id password hashing
+  - Password policy enforcement
+  - Password history tracking
+  - Password expiration checks
+
 - Rate Limiting
   - Request rate limiting with burst control
   - Per-client IP rate limiting
   - Configurable limits
   - IP-based tracking
   - Burst window management
-
-- Security Headers
-  - Strict Transport Security (HSTS)
-  - X-Frame-Options
-  - Content Security Policy (CSP)
-  - X-Content-Type-Options
-  - Custom security header configuration
 
 - SSL/TLS Support
   - OpenSSL integration
@@ -111,6 +121,20 @@ A high-performance Web Hosting platform written in Rust, designed to provide ent
 
 ## Completed Tests
 
+- Security Headers Tests
+  - CSP headers validation
+  - X-Frame-Options configuration
+  - Feature-Policy implementation
+  - Expect-CT settings
+  - Security headers middleware
+
+- Password Security Tests
+  - Password hashing verification
+  - Password policy compliance
+  - Password history tracking
+  - Password expiration checks
+  - Edge case handling
+
 | Error Handling Tests | Security & Infrastructure Tests |
 |---------------------|--------------------------------|
 | Authentication Errors | Security Headers |
@@ -133,23 +157,11 @@ A high-performance Web Hosting platform written in Rust, designed to provide ent
 | Request Body Size Limit Errors | Key Rotation |
 | Malformed Body Handling Errors | |
 
-
 ## Features To Complete
 
 - API Security
   - JWT implementation
   - API key management  - Request signing
-
-- Password Security
-  - Password hashing (bcrypt/argon2)
-  - Password policy enforcement
-  - Secure password reset flow
-
-- Enhanced Security Headers
-  - Referrer-Policy
-  - Feature-Policy
-  - Expect-CT
-  - Clear-Site-Data
 
 - DDoS Protection
   - Advanced rate limiting strategies
@@ -173,6 +185,5 @@ A high-performance Web Hosting platform written in Rust, designed to provide ent
   - Configuration management
   - Docker containerization
   - CI/CD pipeline
-  - Load balancing
-## License
+  - Load balancing## License
 MIT Licensed. See LICENSE for details.
