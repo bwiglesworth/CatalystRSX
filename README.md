@@ -234,5 +234,9 @@ A high-performance Web Hosting platform written in Rust, designed to provide ent
   - Geographic distribution for regional redundancy
   - Auto-scaling based on load metrics
   
+- Database Platform To Complete
+  - MariaDB 11.4 with Galera
+  - Apache Cassandra 4.0 multiple scaling
+
 ## License
 MIT Licensed. See LICENSE for details...
