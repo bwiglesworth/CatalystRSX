@@ -204,7 +204,7 @@ A high-performance Web Hosting platform written in Rust, designed to provide ent
     - Password policy configuration
     - Security header management
     - TLS settings adjustment
-  - Augit Trail Access
+  - Audit Trail Access
     - Security log viewer
     - User activity timeline
     - Configuration changes
