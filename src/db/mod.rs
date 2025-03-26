@@ -5,6 +5,8 @@ use std::env;
 
 pub type DbPool = MySqlPool;
 
+pub mod query;
+
 pub async fn create_pool() -> Result<DbPool> {
     dotenv().ok();
     let db_pass = env::var("DB_PASSWORD").expect("DB_PASSWORD must be set");
@@ -14,10 +16,7 @@ pub async fn create_pool() -> Result<DbPool> {
         .username("catalystrsx")
         .password(&db_pass)
         .database("catalystrsx")
-        .ssl_mode(sqlx::mysql::MySqlSslMode::VerifyIdentity)
-        .ssl_ca("/etc/ssl/mariadb/ca-cert.pem")
-        .ssl_client_cert("/etc/ssl/mariadb/client-cert.pem")
-        .ssl_client_key("/etc/ssl/mariadb/client-key.pem");
-
+        .ssl_mode(sqlx::mysql::MySqlSslMode::Required);
     let pool = MySqlPool::connect_with(options).await?;
-    Ok(pool)}
+    Ok(pool)
+}

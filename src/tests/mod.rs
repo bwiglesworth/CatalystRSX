@@ -20,3 +20,5 @@ mod guard_test;
 mod xss_test;
 #[cfg(test)]
 mod db_test;
+#[cfg(test)]
+mod query_test;
