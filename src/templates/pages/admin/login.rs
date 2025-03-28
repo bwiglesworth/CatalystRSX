@@ -3,7 +3,7 @@ use dioxus::prelude::*;
 pub fn login_page(cx: Scope) -> Element {
     let on_submit = move |evt: FormEvent| {
         evt.stop_propagation();
-        let form = evt.data;
+        let _form = evt.data; // Now properly marked as intentionally unused
         // Handle form submission
     };
 
