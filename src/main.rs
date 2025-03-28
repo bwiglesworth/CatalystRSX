@@ -37,6 +37,8 @@ async fn main() -> std::io::Result<()> {
             .service(api_routes())
             .service(
                 web::scope("/admin")
+                    .route("/login", web::get().to(login_page_handler))
+                    .route("/login", web::post().to(auth::admin::admin_login))
                     .wrap(AdminGuard::new())
                     .route("/dashboard", web::get().to(dashboard_handler))            )
     })
