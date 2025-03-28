@@ -5,6 +5,7 @@ use dioxus_ssr::render_lazy;
 use crate::error::AppError;
 use crate::templates::pages::index::index_page;
 use crate::templates::pages::admin::login::login_page;
+
 #[derive(Serialize, Deserialize)]
 pub struct User {
     pub id: String,
@@ -48,4 +49,14 @@ pub async fn update_user(id: web::Path<String>, user: web::Json<User>) -> impl R
 
 pub async fn delete_user(id: web::Path<String>) -> impl Responder {
     HttpResponse::Ok().json(format!("Deleted user {}", id))
+}
+
+pub async fn login_handler() -> HttpResponse {
+    let rendered = render_lazy(rsx! {
+        login_page {}
+    });
+
+    HttpResponse::Ok()
+        .content_type("text/html")
+        .body(rendered)
 }

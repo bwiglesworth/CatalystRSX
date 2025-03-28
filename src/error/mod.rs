@@ -7,21 +7,21 @@ use std::fmt;
 #[derive(Debug)]
 #[allow(dead_code)]
 pub enum AppError {
-    InternalError,
+    InternalError(String),
+    AuthenticationError(String),
     ValidationError(String),
-    AuthenticationError,
-    AuthorizationError,
-    NotFoundError,
+    DatabaseError(String),
+    NotFoundError(String)
 }
 
 impl fmt::Display for AppError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Self::InternalError => write!(f, "Internal server error"),
+            Self::InternalError(msg) => write!(f, "Internal server error: {}", msg),
+            Self::AuthenticationError(msg) => write!(f, "Authentication failed: {}", msg),
             Self::ValidationError(msg) => write!(f, "Validation error: {}", msg),
-            Self::AuthenticationError => write!(f, "Authentication failed"),
-            Self::AuthorizationError => write!(f, "Authorization failed"),
-            Self::NotFoundError => write!(f, "Resource not found"),
+            Self::DatabaseError(msg) => write!(f, "Database error: {}", msg),
+            Self::NotFoundError(msg) => write!(f, "Resource not found: {}", msg),
         }
     }
 }
@@ -29,11 +29,11 @@ impl fmt::Display for AppError {
 impl ResponseError for AppError {
     fn status_code(&self) -> StatusCode {
         match self {
-            Self::InternalError => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::InternalError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::AuthenticationError(_) => StatusCode::UNAUTHORIZED,
             Self::ValidationError(_) => StatusCode::BAD_REQUEST,
-            Self::AuthenticationError => StatusCode::UNAUTHORIZED,
-            Self::AuthorizationError => StatusCode::FORBIDDEN,
-            Self::NotFoundError => StatusCode::NOT_FOUND,
+            Self::DatabaseError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::NotFoundError(_) => StatusCode::NOT_FOUND,
         }
     }
 }

@@ -1,31 +1,25 @@
-use actix_web::web;
+use actix_web::{web, Scope, Error};
+use actix_web::dev::{ServiceFactory, ServiceRequest, ServiceResponse};
 use crate::auth::guard::SessionGuard;
-use crate::auth::admin::{AdminGuard, admin_login};
-use self::handlers::*;
-pub mod handlers;
+mod handlers;
+use handlers::*;
 
-
-pub fn configure_routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(
-        web::scope("/api/v1")
-            .wrap(SessionGuard)
-            .service(
-                web::scope("/users")
-                    .route("", web::post().to(create_user))
-                    .route("/{id}", web::get().to(get_user))
-                    .route("/{id}", web::put().to(update_user))
-                    .route("/{id}", web::delete().to(delete_user))
+pub fn api_routes() -> Scope<impl ServiceFactory<
+    ServiceRequest,
+    Config = (),
+    Response = ServiceResponse,
+    Error = Error,
+    InitError = (),
+>> {
+    web::scope("/api")
+        .wrap(SessionGuard)
+        .service(web::scope("/v1")
+            .route("/health", web::get().to(health_check))
+            .service(web::scope("/users")
+                .route("", web::post().to(create_user))
+                .route("/{id}", web::get().to(get_user))
+                .route("/{id}", web::put().to(update_user))
+                .route("/{id}", web::delete().to(delete_user))
             )
-    )
-    .service(
-        web::scope("/admin")
-            .route("/login", web::get().to(admin_login_page))
-            .route("/login", web::post().to(admin_login))
-            .wrap(AdminGuard::new())
-            .route("/dashboard", web::get().to(dashboard_handler))
-    )
-    .service(
-        web::resource("/")
-            .route(web::get().to(index_handler))
-    );
-}
+        )
+}}

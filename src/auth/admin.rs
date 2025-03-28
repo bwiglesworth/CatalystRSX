@@ -5,6 +5,10 @@ use serde::Deserialize;
 use std::future::{ready, Ready, Future};
 use std::pin::Pin;
 use std::task::{Context, Poll};
+use crate::models::user::User;
+use crate::db::pool::get_pool;
+use crate::auth::password::verify_password;
+use crate::error::AppError;
 
 #[derive(Debug, Deserialize)]
 pub struct AdminLoginData {
@@ -68,13 +72,42 @@ where
 }
 
 pub async fn admin_login(
-    credentials: web::Json<AdminLoginData>,
+    form: web::Form<AdminLoginData>,
     session: Session,
 ) -> Result<HttpResponse, Error> {
-    if credentials.username == "admin" && credentials.password == "secure_admin" {
-        session.insert("is_admin", true)?;
-        Ok(HttpResponse::Ok().json("Admin login successful"))
-    } else {
-        Ok(HttpResponse::Unauthorized().json("Invalid credentials"))
+    println!("Login attempt for username: {}", form.username);
+    
+    let pool = get_pool();
+    let user = sqlx::query_as!(
+        User,
+        "SELECT id, username, email, password_hash, role,
+        CAST(failed_login_attempts AS INT) as 'failed_login_attempts: i32',
+        CAST(account_locked AS INT) as 'account_locked: i32',
+        created_at, updated_at, last_login, password_changed_at
+        FROM users WHERE username = ?",
+        form.username
+    )    .fetch_optional(pool)
+    .await
+    .map_err(|e| AppError::DatabaseError(e.to_string()))?;
+
+    println!("User found: {:?}", user);
+    
+    match user {
+        Some(user) => {
+            let verified = verify_password(&form.password, &user.password_hash);
+            println!("Password verification result: {}", verified);
+            
+            if verified {
+                session.insert("user_id", user.id)?;
+                session.insert("role", "admin")?;
+                session.insert("is_admin", true)?;
+                Ok(HttpResponse::Found().append_header(("Location", "/admin/dashboard")).finish())
+            } else {
+                Ok(HttpResponse::Found().append_header(("Location", "/admin/login?error=invalid_credentials")).finish())
+            }
+        }
+        None => {
+            Ok(HttpResponse::Found().append_header(("Location", "/admin/login?error=invalid_credentials")).finish())
+        }
     }
-}
+}   
