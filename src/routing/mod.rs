@@ -1,8 +1,8 @@
 use actix_web::{web, Scope, Error};
 use actix_web::dev::{ServiceFactory, ServiceRequest, ServiceResponse};
 use crate::auth::guard::SessionGuard;
-mod handlers;
-use handlers::*;
+use crate::auth::admin::{AdminGuard, admin_login, AdminLoginData};use self::handlers::*;
+pub mod handlers;
 
 pub fn api_routes() -> Scope<impl ServiceFactory<
     ServiceRequest,
@@ -22,4 +22,9 @@ pub fn api_routes() -> Scope<impl ServiceFactory<
                 .route("/{id}", web::delete().to(delete_user))
             )
         )
-}
+        .service(web::scope("/admin")
+            .route("", web::get().to(handlers::admin_login_page))
+            .route("/login", web::post().to(admin_login))
+            .route("/dashboard", web::get().to(dashboard_handler))
+            .wrap(AdminGuard::new())
+        )}

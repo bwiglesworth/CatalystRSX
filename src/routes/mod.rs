@@ -1,21 +1,22 @@
 use actix_web::{web, HttpResponse};
 use dioxus::prelude::*;
 use dioxus_ssr::render_lazy;
-use crate::templates::pages::index::index_page;
+use crate::templates::pages::dashboard::dashboard_page;
+use crate::auth::admin::AdminGuard;
 
 pub fn configure_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(
-        web::resource("/")
-            .route(web::get().to(index_handler))
+        web::scope("/admin")
+            .wrap(AdminGuard)
+            .route("/dashboard", web::get().to(dashboard_handler))
     );
 }
 
-async fn index_handler() -> HttpResponse {
+async fn dashboard_handler() -> HttpResponse {
     let rendered = render_lazy(rsx! {
-        index_page {}
+        dashboard_page {}
     });
 
     HttpResponse::Ok()
         .content_type("text/html")
-        .body(rendered)
-}
+        .body(rendered)}
