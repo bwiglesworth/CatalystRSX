@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use actix_web::{test, web, App, HttpResponse, Error};
-    use catalyst_rsx::middleware::error::ErrorHandler;
+    use crate::middleware::error::ErrorHandler;
     use std::io::{Error as IoError, ErrorKind};
 
     fn create_test_error(msg: &str) -> Error {

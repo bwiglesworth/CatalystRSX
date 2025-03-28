@@ -1,4 +1,4 @@
-use catalyst_rsx::db::encryption::{DataEncryption, KeyManager};
+use crate::db::encryption::{DataEncryption, KeyManager};
 use anyhow::Result;
 use std::time::Duration;
 

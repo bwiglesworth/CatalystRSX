@@ -1,13 +1,13 @@
 #[cfg(test)]
 mod tests {
     use actix_web::test;
-    use catalyst_rsx::validation::UserInput;
+    use crate::validation::UserInput;
 
     #[actix_web::test]
     async fn test_validation() {
         let app = test::init_service(
             actix_web::App::new()
-                .configure(catalyst_rsx::validation::configure_validation)
+                .configure(crate::validation::configure_validation)
         ).await;
 
         let req = test::TestRequest::post()

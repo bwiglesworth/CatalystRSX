@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use catalyst_rsx::logging::security::{SecurityLogger, SecurityLogLevel};
+    use crate::logging::security::{SecurityLogger, SecurityLogLevel};
 
     #[test]
     fn test_security_logging() {

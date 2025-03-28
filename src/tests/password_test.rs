@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use catalyst_rsx::security::password::{PasswordManager, PasswordPolicy, PasswordHistory, PasswordExpiration};
+    use crate::security::password::{PasswordManager, PasswordPolicy, PasswordHistory, PasswordExpiration};
     use time::{Duration, OffsetDateTime};
 
     #[test]

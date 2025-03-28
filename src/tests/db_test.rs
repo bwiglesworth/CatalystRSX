@@ -1,4 +1,4 @@
-use catalyst_rsx::db::*;
+use crate::db::*;
 use anyhow::Result;
 use sqlx::Row;
 use std::time::Duration;

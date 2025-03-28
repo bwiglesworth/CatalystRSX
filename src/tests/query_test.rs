@@ -1,4 +1,4 @@
-use catalyst_rsx::db::{create_pool, query::SafeQuery};
+use crate::db::{create_pool, query::SafeQuery};
 use anyhow::Result;
 use sqlx::FromRow;
 #[derive(FromRow)]

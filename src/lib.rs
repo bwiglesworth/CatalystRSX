@@ -8,3 +8,5 @@ pub mod templates;
 pub mod auth;
 pub mod security;
 pub mod db;
+
+mod tests;

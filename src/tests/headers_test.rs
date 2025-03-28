@@ -2,8 +2,8 @@
 mod tests {
     use actix_web::{test, web, App, HttpResponse};
     use actix_web::test::TestRequest;
-    use catalyst_rsx::middleware::SecurityHeaders;
-    use catalyst_rsx::security::headers::{
+    use crate::middleware::SecurityHeaders;
+    use crate::security::headers::{
         ReferrerPolicy,
         ReferrerPolicyBuilder,
         FeaturePolicy,
@@ -12,7 +12,6 @@ mod tests {
         XFrameOptions,
         XFrameOptionsBuilder
     };
-
     #[actix_web::test]
     async fn test_security_headers() {
         let app = test::init_service(
