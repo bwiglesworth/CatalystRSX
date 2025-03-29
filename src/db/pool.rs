@@ -1,6 +1,8 @@
 use once_cell::sync::OnceCell;
 use sqlx::MySqlPool;
 
+pub type DbPool = MySqlPool;
+
 static POOL: OnceCell<MySqlPool> = OnceCell::new();
 
 pub fn init_pool(pool: MySqlPool) {

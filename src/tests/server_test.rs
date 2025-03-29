@@ -1,11 +1,13 @@
 #[cfg(test)]
 mod tests {
     use actix_web::{test, App, web, HttpResponse};
+    use crate::routing::handlers::index_handler;
 
     #[actix_web::test]
     async fn test_server_health() {
         let app = test::init_service(
             App::new()
+                .route("/", web::get().to(index_handler))
                 .route("/health", web::get().to(|| async { 
                     HttpResponse::Ok().body("Server is running") 
                 }))

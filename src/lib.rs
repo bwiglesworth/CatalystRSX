@@ -10,9 +10,7 @@ pub mod models {
     pub mod user;
 }
 
-pub mod db {
-    pub mod pool;
-}
+pub mod db;
 
 pub mod auth {
     pub mod guard;

@@ -1,5 +1,6 @@
 use sqlx::{FromRow, MySql, QueryBuilder, Execute};
-use sqlx::mysql::MySqlRow;use crate::db::DbPool;
+use sqlx::mysql::MySqlRow;
+use crate::db::pool::DbPool;
 use anyhow::Result;
 
 pub struct SafeQuery<'a, T> {
