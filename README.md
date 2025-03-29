@@ -143,12 +143,13 @@ A high-performance Web Hosting platform written in Rust, designed to provide ent
 | Query Parameter Validation Errors | Data Encryption |
 | Request Body Size Limit Errors | Key Rotation |
 | Malformed Body Handling Errors | Feature-Policy Implementation |
-| | Expect-CT Settings |
-| | Password Hashing Verification |
-| | Password Policy Compliance |
-| | Password History Tracking |
-| | Password Expiration Checks |
+| Query Builder Tests | Expect-CT Settings |
+| Encryption Tests | Password Hashing Verification |
+| Pool Configuration Tests | Password Policy Compliance |
+| Database Connection Tests | Password History Tracking |
+| Key Manager Tests | Password Expiration Checks |
 | | Password Edge Cases |
+
 ## Features To Complete
 
 - API Security
