@@ -42,15 +42,16 @@ async fn main() -> std::io::Result<()> {
             .route("/", web::get().to(index_handler))
             .service(
                 web::scope("/admin")
+                    // Public admin routes
                     .route("/login", web::get().to(admin_login_page))
                     .route("/login", web::post().to(admin_login))
+                    // Protected admin routes
                     .service(
-                        web::scope("")
+                        web::scope("/dashboard")
                             .wrap(AdminGuard::new())
-                            .route("/dashboard", web::get().to(dashboard_handler))
+                            .route("", web::get().to(dashboard_handler))
                     )
-            )
-    })
+            )    })
     .bind_openssl(&format!("{}:{}", config.server.host, config.server.port), builder)?
     .run()
     .await

@@ -15,30 +15,25 @@ pub fn configure_session() -> SessionMiddleware<CookieSessionStore> {
     )
     .cookie_secure(true)
     .cookie_http_only(true)
-    .cookie_same_site(SameSite::Strict)
+    .cookie_same_site(SameSite::Lax)
     .session_lifecycle(
         actix_session::config::PersistentSession::default()
             .session_ttl(Duration::hours(1))
     )
     .build()
 }
-
 pub async fn create_session(session: &Session, user: &User) -> Result<(), actix_web::Error> {
-    session.insert("user_id", &user.id)?;
-    session.insert("username", &user.username)?;
-    session.insert("role", &user.role)?;
+    session.insert("user_id", user.id.as_str())?;
+    session.insert("username", user.username.as_str())?;
+    session.insert("role", user.role.as_str())?;
+    session.insert("is_admin", user.role == "admin")?;
     
-    // Update last login timestamp
     User::update_last_login(&user.id).await.map_err(|e| AppError::DatabaseError(e.to_string()))?;
-    
-    // Reset failed login attempts
     User::reset_failed_attempts(&user.id).await.map_err(|e| AppError::DatabaseError(e.to_string()))?;
     
-    // Set session timeout
-    session.insert("expires_at", time::OffsetDateTime::now_utc() + Duration::hours(2))?;    Ok(())
-}
-
-pub fn clear_session(session: &Session) {
+    session.insert("expires_at", time::OffsetDateTime::now_utc() + Duration::hours(2))?;
+    Ok(())
+}pub fn clear_session(session: &Session) {
     session.purge();
 }
 

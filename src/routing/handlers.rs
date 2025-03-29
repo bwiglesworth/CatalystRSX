@@ -39,9 +39,7 @@ pub async fn admin_login(
                     session::create_session(&session, &user).await.map_err(AppError::from)?;
                     Ok(HttpResponse::Found()
                         .append_header(("Location", "/admin/dashboard"))
-                        .finish())
-                },
-                _ => {
+                        .finish())                },                _ => {
                     User::increment_failed_attempts(&user.id).await.map_err(AppError::from)?;
                     Ok(HttpResponse::Found()
                         .append_header(("Location", "/admin/login?error=invalid_credentials"))
@@ -57,15 +55,14 @@ pub async fn admin_login(
     }
 }
 pub async fn dashboard_handler(session: actix_session::Session) -> HttpResponse {
-    match (session.get::<String>("username"), session.get::<String>("role")) {
-        (Ok(Some(username)), Ok(Some(role))) => {
+    match (session.get::<String>("user_id"), session.get::<String>("role")) {
+        (Ok(Some(_)), Ok(Some(role))) => {
             let rendered = render_lazy(rsx! {
                 dashboard_page {
-                    username: username,
-                    role: role
+                    username: "admin".to_string(),
+                    role: role.trim_matches('"').to_string()
                 }
             });
-            
             HttpResponse::Ok()
                 .content_type("text/html")
                 .body(rendered)
@@ -76,9 +73,7 @@ pub async fn dashboard_handler(session: actix_session::Session) -> HttpResponse 
                 .finish()
         }
     }
-}
-
-pub async fn index_handler() -> impl Responder {
+}pub async fn index_handler() -> impl Responder {
     let rendered = render_lazy(rsx! {
         index_page {}
     });
