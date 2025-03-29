@@ -21,7 +21,6 @@ async fn main() -> std::io::Result<()> {
         .expect("Failed to create pool");
 
     init_pool(pool);
-    
     let governor_conf = GovernorConfigBuilder::default()
         .per_second(2)
         .burst_size(5)
@@ -51,7 +50,8 @@ async fn main() -> std::io::Result<()> {
                             .route("/dashboard", web::get().to(dashboard_handler))
                     )
             )
-    })    .bind_openssl(&format!("{}:{}", config.server.host, config.server.port), builder)?
+    })
+    .bind_openssl(&format!("{}:{}", config.server.host, config.server.port), builder)?
     .run()
     .await
 }

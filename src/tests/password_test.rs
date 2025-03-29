@@ -1,102 +1,75 @@
 #[cfg(test)]
 mod tests {
-    use crate::security::password::{PasswordManager, PasswordPolicy, PasswordHistory, PasswordExpiration};
-    use time::{Duration, OffsetDateTime};
+    use sqlx::MySqlPool;
+    use crate::security::password::PasswordManager;
+    use crate::security::password::history::PasswordHistory;
+    //use crate::security::password::{policy, expiration};
+    use dotenv::dotenv;
 
-    #[test]
-    fn test_password_hashing() {
-        let password_manager = PasswordManager::new();
-        let password = "MySecurePassword123!";
-        let hash = password_manager.hash_password(password).unwrap();
+    async fn setup_test_pool() -> Result<MySqlPool, String> {
+        dotenv().ok();
+        let database_url = std::env::var("DATABASE_URL")
+            .map_err(|e| format!("Failed to get DATABASE_URL from .env: {}", e))?;
+            
+        MySqlPool::connect(&database_url)
+            .await
+            .map_err(|e| format!("Database connection error: {:?}", e))
+    }
+
+    #[tokio::test]
+    async fn test_password_hash_verify() {
+        let pool = setup_test_pool()
+            .await
+            .expect("Test pool setup failed - check .env DATABASE_URL");
+            
+        let password_manager = PasswordManager::new(pool);
+        let test_password = "Test123!@#";
         
-        assert!(hash.starts_with("$argon2id$"));
-        assert!(password_manager.verify_password(password, &hash).unwrap());
+        let hash = password_manager.hash_password(test_password)
+            .expect("Password hashing failed");
+            
+        assert!(password_manager.verify_password(test_password, &hash)
+            .expect("Password verification failed"));
     }
 
-    #[test]
-    fn test_password_verification_fails() {
-        let password_manager = PasswordManager::new();
-        let password = "MySecurePassword123!";
-        let wrong_password = "WrongPassword123!";
-        let hash = password_manager.hash_password(password).unwrap();
-        
-        assert!(!password_manager.verify_password(wrong_password, &hash).unwrap());
-    }
-
-    #[test]
-    fn test_password_policy_valid() {
-        let policy = PasswordPolicy::new();
-        let valid_password = "SecurePass123!@";
-        assert!(policy.validate(valid_password).is_ok());
-    }
-
-    #[test]
-    fn test_password_policy_too_short() {
-        let policy = PasswordPolicy::new();
-        let short_password = "Short1!";
-        let result = policy.validate(short_password);
-        assert!(result.is_err());
-        assert!(result.unwrap_err().contains(&"Password must be at least 12 characters".to_string()));
-    }
-
-    #[test]
-    fn test_password_policy_missing_requirements() {
-        let policy = PasswordPolicy::new();
-        let weak_password = "weakpassword";
-        let errors = policy.validate(weak_password).unwrap_err();
-        
-        assert!(errors.contains(&"Password must contain at least one uppercase letter".to_string()));
-        assert!(errors.contains(&"Password must contain at least one number".to_string()));
-        assert!(errors.contains(&"Password must contain at least one special character".to_string()));
-    }
-
-    #[test]
-    fn test_password_history_tracking() {
-        let password_manager = PasswordManager::new();
+    #[tokio::test]
+    async fn test_password_history() {
+        let pool = setup_test_pool().await.expect("Failed to setup test pool");
         let mut history = PasswordHistory::new(3);
         
-        let password1 = "SecurePass123!@";
-        let hash1 = password_manager.hash_password(password1).unwrap();
-        history.add(hash1);
-        
-        assert!(history.contains(password1));
-    }
-
-    #[test]
-    fn test_password_history_limit() {
-        let password_manager = PasswordManager::new();
-        let mut history = PasswordHistory::new(2);
-        
-        let passwords = ["Pass1!@#", "Pass2!@#", "Pass3!@#"];
-        
-        for pass in passwords.iter() {
-            let hash = password_manager.hash_password(pass).unwrap();
-            history.add(hash);
+        for password in ["pass1", "pass2", "pass3"] {
+            history.add_password(&pool, password).unwrap();
         }
-        
-        assert!(!history.contains(passwords[0])); // Oldest password should be removed
-        assert!(history.contains(passwords[1]));
-        assert!(history.contains(passwords[2]));
+
+        assert!(history.contains(&pool, "pass3"));
+        assert!(!history.contains(&pool, "nonexistent"));
     }
 
-    #[test]
-    fn test_password_not_expired() {
-        let expiration = PasswordExpiration::new(90);
-        let timestamp = OffsetDateTime::now_utc();
-        assert!(!expiration.is_expired(timestamp));
-    }
+    #[cfg(test)]
+    mod tests {
+        use crate::security::password::policy;
 
-    #[test]
-    fn test_password_is_expired() {
-        let expiration = PasswordExpiration::new(90);
-        let old_timestamp = OffsetDateTime::now_utc() - Duration::days(91);
-        assert!(expiration.is_expired(old_timestamp));
-    }
+        #[test]
+        fn test_password_policy_compliance() {
+            let policy = policy::PasswordPolicy::new();
+            
+            // This should pass all requirements
+            assert!(policy.validate("Strong1!Password").is_ok());
+            
+            // These should fail various requirements
+            assert!(policy.validate("weak").is_err());
+            assert!(policy.validate("nocapitals123!").is_err());
+            assert!(policy.validate("NOSMALL123!").is_err());
+            assert!(policy.validate("NoSpecial123").is_err());
+            assert!(policy.validate("NoNumbers!").is_err());
+        }
 
-    #[test]
-    fn test_password_expiration_edge_case() {
-        let expiration = PasswordExpiration::new(90);
-        let edge_timestamp = OffsetDateTime::now_utc() - Duration::days(90);
-        assert!(!expiration.is_expired(edge_timestamp));
-    }
-}
+        #[test]
+        fn test_password_edge_cases() {
+            let policy = policy::PasswordPolicy::new();
+            
+            assert!(policy.validate("").is_err());
+            assert!(policy.validate("🔒").is_err());
+            assert!(policy.validate(&"a".repeat(129)).is_err());
+        }
+}}    

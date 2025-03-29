@@ -1,7 +1,7 @@
-mod manager;
-mod policy;
-mod history;
-mod expiration;
+pub mod manager;
+pub mod history;
+pub mod expiration;
+pub mod policy;
 
 pub use self::manager::PasswordManager;
 pub use self::policy::PasswordPolicy;

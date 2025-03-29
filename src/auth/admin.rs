@@ -80,21 +80,22 @@ pub async fn admin_login(
     let pool = get_pool();
     let user = sqlx::query_as!(
         User,
-        "SELECT id, username, email, password_hash, role,
-        CAST(failed_login_attempts AS INT) as 'failed_login_attempts: i32',
-        CAST(account_locked AS INT) as 'account_locked: i32',
-        created_at, updated_at, last_login, password_changed_at
-        FROM users WHERE username = ?",
+        r#"SELECT 
+            id, username, email, password_hash, role,
+            failed_login_attempts,
+            account_locked as `account_locked: bool`,
+            created_at, updated_at, last_login, password_changed_at
+        FROM users 
+        WHERE username = ?"#,
         form.username
-    )    .fetch_optional(pool)
-    .await
+    )    .fetch_optional(pool)    .await
     .map_err(|e| AppError::DatabaseError(e.to_string()))?;
 
     println!("User found: {:?}", user);
     
     match user {
         Some(user) => {
-            let verified = verify_password(&form.password, &user.password_hash);
+            let verified = verify_password(pool, &form.password, &user.password_hash);
             println!("Password verification result: {}", verified);
             
             if verified {

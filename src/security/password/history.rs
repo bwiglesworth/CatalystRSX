@@ -6,6 +6,8 @@ pub struct PasswordHistory {
     max_entries: usize,
 }
 
+use sqlx::MySqlPool;
+
 struct PasswordEntry {
     hash: String,
     timestamp: OffsetDateTime,
@@ -19,20 +21,25 @@ impl PasswordHistory {
         }
     }
 
-    pub fn add(&mut self, hash: String) {
-        let entry = PasswordEntry {
-            hash,
-            timestamp: OffsetDateTime::now_utc(),
-        };
-
+    pub fn add_password(&mut self, pool: &MySqlPool, password: &str) -> Result<(), String> {
+        let password_manager = super::PasswordManager::new(pool.clone());
+        let hash = password_manager.hash_password(password)
+            .map_err(|e| e.to_string())?;
+            
         if self.history.len() >= self.max_entries {
             self.history.pop_back();
         }
-        self.history.push_front(entry);
+        
+        self.history.push_front(PasswordEntry {
+            hash,
+            timestamp: OffsetDateTime::now_utc()
+        });
+        
+        Ok(())
     }
 
-    pub fn contains(&self, password: &str) -> bool {
-        let password_manager = super::PasswordManager::new();
+    pub fn contains(&self, pool: &MySqlPool, password: &str) -> bool {
+        let password_manager = super::PasswordManager::new(pool.clone());
         self.history.iter().any(|entry| {
             password_manager.verify_password(password, &entry.hash)
                 .unwrap_or(false)
