@@ -12,6 +12,8 @@ pub mod routing {
 }
 pub mod models {
     pub mod user;
+    pub mod vhost;
+
 }
 
 pub mod auth {

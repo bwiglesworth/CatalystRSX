@@ -9,7 +9,6 @@ use std::time::Duration;
 pub type DbPool = MySqlPool;
 
 pub mod pool;
-pub mod init_db;
 pub mod query;
 
 pub async fn create_pool() -> Result<DbPool> {
