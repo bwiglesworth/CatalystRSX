@@ -25,11 +25,13 @@ pub mod auth {
 
 pub mod templates {
     pub mod pages {
-        pub mod index;
+        pub mod layout;
         pub mod admin {
+            pub mod layout;
             pub mod login;
             pub mod dashboard;
         }
+        pub mod index;
     }
 }
 

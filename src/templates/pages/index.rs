@@ -1,11 +1,9 @@
 use dioxus::prelude::*;
+use crate::templates::pages::layout;
 
 pub fn index_page(cx: Scope) -> Element {
-    cx.render(rsx! {
-        head {
-            link { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" }
-        }
-        div { class: "min-h-screen bg-gradient-to-r from-blue-500 to-indigo-600 relative pb-16",
+    let content = rsx!(
+        div { class: "min-h-screen bg-gradient-to-r from-blue-500 to-indigo-600",
             nav { class: "bg-white bg-opacity-10 p-4",
                 div { class: "container mx-auto flex justify-between items-center",
                     h1 { class: "text-2xl font-bold text-white", "CatalystRSX" }
@@ -16,9 +14,14 @@ pub fn index_page(cx: Scope) -> Element {
             }
             main { class: "container mx-auto px-4 py-16",
                 div { class: "text-center text-white",
-                    h2 { class: "text-5xl font-bold mb-8", "Enterprise Web Security as a Service" }
-                    p { class: "text-xl mb-12", "Secure your web applications with robust protection powered by Rust" }
-                    
+                                    h2 { 
+                                        class: "text-5xl font-bold mb-8", 
+                                        "Enterprise Web Software as a Service"
+                                    }
+                                    p { 
+                                        class: "text-xl mb-12", 
+                                        "A Security First Approach"
+                                    }                    
                     div { class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-16",
                         div { class: "bg-white bg-opacity-10 p-6 rounded-lg transform hover:scale-105 transition-transform",
                             h3 { class: "text-xl font-semibold mb-4", "Rate Limiting" }
@@ -44,5 +47,7 @@ pub fn index_page(cx: Scope) -> Element {
                     p { "Powered by Rust & Dioxus | Enterprise-grade security for modern web applications" }
                 }
             }
-        }    })
+        }
+    );
+    layout::layout(cx, content)
 }

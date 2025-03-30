@@ -1,0 +1,54 @@
+.dashboard-card {
+    backdrop-filter: blur(10px);
+    transition: transform 0.2s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 0.5rem;
+}
+
+.nav-link {
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Reset default margins and ensure full viewport coverage */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow-x: hidden;
+}
+
+/* Ensure content fills viewport exactly */
+.min-h-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Remove any unwanted spacing */
+.container {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Enhance gradient background */
+.bg-gradient-to-r {
+    background-size: 100% 100%;
+    background-attachment: fixed;
+}

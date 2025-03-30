@@ -1,5 +1,6 @@
 use actix_web::{web, App, HttpServer};
 use actix_web::middleware::Logger;
+use actix_files::Files;
 use actix_governor::{Governor, GovernorConfigBuilder};
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use catalyst_rsx::auth::admin::{AdminGuard, admin_login};
@@ -33,10 +34,12 @@ async fn main() -> std::io::Result<()> {
     let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls())?;
     builder.set_certificate_file(&config.server.tls_cert_path, SslFiletype::PEM)?;
     builder.set_private_key_file(&config.server.tls_key_path, SslFiletype::PEM)?;
-
     HttpServer::new(move || {
         App::new()
-            .wrap(Logger::default())
+            .wrap(Logger::new("%r %s %b %D"))
+            .service(Files::new("/static", "./static")
+                .show_files_listing()
+                .use_last_modified(true))
             .wrap(Governor::new(&governor_conf))
             .wrap(configure_session())
             .route("/", web::get().to(index_handler))
@@ -50,9 +53,6 @@ async fn main() -> std::io::Result<()> {
                         web::scope("/dashboard")
                             .wrap(AdminGuard::new())
                             .route("", web::get().to(dashboard_handler))
-                    )
-            )    })
-    .bind_openssl(&format!("{}:{}", config.server.host, config.server.port), builder)?
-    .run()
+                    )            )    })    .bind_openssl(&format!("{}:{}", config.server.host, config.server.port), builder)?    .run()
     .await
 }

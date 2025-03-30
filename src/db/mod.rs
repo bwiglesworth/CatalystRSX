@@ -10,7 +10,7 @@ pub type DbPool = MySqlPool;
 
 pub mod pool;
 pub mod query;
-
+pub mod encryption;
 pub async fn create_pool() -> Result<DbPool> {
     dotenv().ok();
     let db_pass = env::var("DB_PASSWORD").expect("DB_PASSWORD must be set");
