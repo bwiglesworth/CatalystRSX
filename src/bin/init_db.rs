@@ -189,6 +189,44 @@ async fn create_admin_user(pool: &MySqlPool) -> Result<(), Error> {
     Ok(())
 }
 
+async fn create_default_vhost(pool: &MySqlPool) -> Result<(), Error> {
+    let domain = std::env::var("SERVER_DOMAIN").expect("SERVER_DOMAIN must be set");
+    let ssl_cert = std::env::var("TLS_CERT_PATH").expect("TLS_CERT_PATH must be set");
+    let ssl_key = std::env::var("TLS_KEY_PATH").expect("TLS_KEY_PATH must be set");
+
+    let vhost_exists = sqlx::query!(
+        "SELECT * FROM virtual_hosts WHERE domain = ?",
+        domain
+    )
+    .fetch_optional(pool)
+    .await?;
+
+    if vhost_exists.is_some() {
+        println!("Default virtual host already exists");
+        return Ok(());
+    }
+
+    sqlx::query!(
+        r#"
+        INSERT INTO virtual_hosts (id, domain, root_path, ssl_enabled, ssl_cert_path, ssl_key_path)
+        VALUES (?, ?, ?, ?, ?, ?)
+        "#,
+        Uuid::new_v4().to_string(),
+        domain,
+        "/var/www/html",
+        true,
+        ssl_cert,
+        ssl_key
+    )
+    .execute(pool)
+    .await?;
+
+    println!("Default virtual host created successfully");
+    Ok(())
+}
+
+
+
 #[tokio::main]
 async fn main() {
     dotenv::dotenv().ok();
@@ -234,6 +272,12 @@ async fn main() {
     create_admin_user(&app_pool)
     .await
     .expect("Failed to create admin user");
+
+    // Add default virtual host
+    create_default_vhost(&app_pool)
+    .await
+    .expect("Failed to create default virtual host");
+
 
 
 }

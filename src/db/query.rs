@@ -33,11 +33,36 @@ where
         self
     }
 
+    pub fn where_eq(mut self, column: &'a str, value: &'a str) -> Self {
+        self.builder
+            .push(" WHERE ")
+            .push(column)
+            .push(" = ")
+            .push_bind(value);
+        self
+    }
+
     pub async fn fetch_all(mut self, pool: &DbPool) -> Result<Vec<T>> {
         let query = self.builder.build();
         let results = sqlx::query_as::<_, T>(query.sql())
             .fetch_all(pool)
             .await?;
         Ok(results)
+    }
+
+    pub async fn fetch_one(mut self, pool: &DbPool) -> Result<T> {
+        let query = self.builder.build();
+        let result = sqlx::query_as::<_, T>(query.sql())
+            .fetch_one(pool)
+            .await?;
+        Ok(result)
+    }
+
+    pub async fn fetch_optional(mut self, pool: &DbPool) -> Result<Option<T>> {
+        let query = self.builder.build();
+        let result = sqlx::query_as::<_, T>(query.sql())
+            .fetch_optional(pool)
+            .await?;
+        Ok(result)
     }
 }

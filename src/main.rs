@@ -9,6 +9,7 @@ use catalyst_rsx::routing::handlers::{dashboard_handler, admin_login_page, index
 use catalyst_rsx::config::Config;
 use catalyst_rsx::db::pool::init_pool;
 use sqlx::mysql::MySqlPoolOptions;
+use catalyst_rsx::middleware::configure_vhosts;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -21,7 +22,9 @@ async fn main() -> std::io::Result<()> {
         .await
         .expect("Failed to create pool");
 
+    let pool_clone = pool.clone();
     init_pool(pool);
+
     let governor_conf = GovernorConfigBuilder::default()
         .per_second(2)
         .burst_size(5)
@@ -34,25 +37,28 @@ async fn main() -> std::io::Result<()> {
     let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls())?;
     builder.set_certificate_file(&config.server.tls_cert_path, SslFiletype::PEM)?;
     builder.set_private_key_file(&config.server.tls_key_path, SslFiletype::PEM)?;
+    
     HttpServer::new(move || {
         App::new()
             .wrap(Logger::new("%r %s %b %D"))
+            .wrap(Governor::new(&governor_conf))
+            .wrap(configure_session())
+            .configure(|cfg| {
+                let _ = configure_vhosts(cfg, pool_clone.clone());
+            })
             .service(Files::new("/static", "./static")
                 .show_files_listing()
                 .use_last_modified(true))
-            .wrap(Governor::new(&governor_conf))
-            .wrap(configure_session())
             .route("/", web::get().to(index_handler))
             .service(
                 web::scope("/admin")
-                    // Public admin routes
                     .route("/login", web::get().to(admin_login_page))
                     .route("/login", web::post().to(admin_login))
-                    // Protected admin routes
                     .service(
                         web::scope("/dashboard")
                             .wrap(AdminGuard::new())
                             .route("", web::get().to(dashboard_handler))
-                    )            )    })    .bind_openssl(&format!("{}:{}", config.server.host, config.server.port), builder)?    .run()
-    .await
-}
+                    )
+            )    })
+    .bind_openssl(&format!("{}:{}", config.server.host, config.server.port), builder)?    .run()
+    .await}

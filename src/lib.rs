@@ -5,6 +5,7 @@ pub mod config;
 pub mod logging;
 pub mod db;
 mod tests;
+
 pub mod security;
 
 pub mod routing {
