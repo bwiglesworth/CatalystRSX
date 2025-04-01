@@ -13,3 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+function handleLogout() {
+    window.location.href = '/admin/logout';
+}

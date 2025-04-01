@@ -35,7 +35,8 @@ pub fn admin_routes() -> Scope<impl ServiceFactory<
 >> {
     web::scope("/admin")
         .wrap(SecurityHeadersMiddleware::new())
-        .route("/login", web::get().to(login_page))
-        .route("/login", web::post().to(handlers::login))
-        .route("/dashboard", web::get().to(handlers::dashboard))
-}
+        .route("/login", web::get().to(admin_login_page))
+        .route("/login", web::post().to(admin_login))
+        .route("/dashboard", web::get().to(dashboard_handler))
+        .route("/logout", web::post().to(logout_handler))
+}}

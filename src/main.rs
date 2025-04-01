@@ -5,7 +5,7 @@ use actix_governor::{Governor, GovernorConfigBuilder};
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use catalyst_rsx::auth::admin::{AdminGuard, admin_login};
 use catalyst_rsx::auth::session::configure_session;
-use catalyst_rsx::routing::handlers::{dashboard_handler, admin_login_page, index_handler};
+use catalyst_rsx::routing::handlers::{dashboard_handler, admin_login_page, index_handler, logout_handler};
 use catalyst_rsx::config::Config;
 use catalyst_rsx::db::pool::init_pool;
 use sqlx::mysql::MySqlPoolOptions;
@@ -54,11 +54,11 @@ async fn main() -> std::io::Result<()> {
                 web::scope("/admin")
                     .route("/login", web::get().to(admin_login_page))
                     .route("/login", web::post().to(admin_login))
+                    .route("/logout", web::post().to(logout_handler))
                     .service(
                         web::scope("/dashboard")
                             .wrap(AdminGuard::new())
                             .route("", web::get().to(dashboard_handler))
                     )
-            )    })
-    .bind_openssl(&format!("{}:{}", config.server.host, config.server.port), builder)?    .run()
+            )    })    .bind_openssl(&format!("{}:{}", config.server.host, config.server.port), builder)?    .run()
     .await}

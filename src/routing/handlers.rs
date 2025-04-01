@@ -98,3 +98,15 @@ pub async fn update_user(id: web::Path<String>, user: web::Json<User>) -> impl R
 pub async fn delete_user(id: web::Path<String>) -> impl Responder {
     HttpResponse::Ok().json(format!("Deleted user {}", id))
 }
+
+pub async fn logout_handler(session: actix_session::Session) -> HttpResponse {
+    log::info!("Starting logout process");
+    log::info!("Current session state: {:?}", session.entries());
+    session::clear_session(&session);
+    log::info!("Session cleared, preparing redirect");
+    let response = HttpResponse::Found()
+        .append_header(("Location", "/admin/login"))
+        .finish();
+    log::info!("Redirect response prepared: {:?}", response);
+    response
+}

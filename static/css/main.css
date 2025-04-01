@@ -6,9 +6,24 @@
 .dashboard-card:hover {
     transform: translateY(-2px);
 }
+.dashboard-button {
+    background: #4F46E5;  /* Solid indigo color */
+    color: white;
+    padding: 0.75rem 1.5rem;
+    font-size: 1.125rem;
+    border-radius: 0.5rem;
+    transition: all 200ms;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-.stat-card {
-    background: rgba(255, 255, 255, 0.1);
+.dashboard-button:hover {
+    background: #3B82F6;  /* Shifts to blue on hover */
+    transform: scale(1.05);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card {    background: rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     padding: 1rem;
     margin: 0.5rem;
@@ -26,25 +41,18 @@
 html, body {
     margin: 0;
     padding: 0;
-    height: 100vh;
     width: 100vw;
     overflow-x: hidden;
 }
 
-/* Ensure content fills viewport exactly */
-.min-h-screen {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
+/* Ensure full viewport coverage */
 
-/* Remove any unwanted spacing */
+/* Remove container constraints */
 .container {
-    margin: 0 auto;
     width: 100%;
-    max-width: 100%;
-    padding-left: 0;
-    padding-right: 0;
+    max-width: none;
+    padding: 0;
+    margin: 0;
 }
 
 /* Enhance gradient background */
@@ -52,3 +60,4 @@ html, body {
     background-size: 100% 100%;
     background-attachment: fixed;
 }
+
